@@ -1,40 +1,14 @@
-# Learning Particle Dynamics for Manipulating Rigid Bodies, Deformable Objects, and Fluids
+## Training
+```
+python train.py --env FluidShake --dataf /data/vision/torralba/tactile/physics_flex/data_FluidShake
+```
 
-Yunzhu Li, Jiajun Wu, Russ Tedrake, Joshua B. Tenenbaum, Antonio Torralba 
+## Evaluation
+```
+python eval.py --env FluidShake --epoch 4 --iter 500000 --dataf /data/vision/torralba/tactile/physics_flex/data_FluidShake
+```
 
-**ICLR 2019**
-[[website]](http://dpi.csail.mit.edu/) [[paper]](http://dpi.csail.mit.edu/dpi-paper.pdf) [[video]](https://www.youtube.com/watch?v=FrPpP7aW3Lg)
-
-## Demo
-
-### Simulation
-
-Rollout from our learned model
-
-![](imgs/sim_FluidFall.gif)  ![](imgs/sim_BoxBath.gif)
-
-![](imgs/sim_FluidShake.gif)  ![](imgs/sim_RiceGrip.gif)
-
-
-## Installation
-
-This codebase is tested with Ubuntu 16.04 LTS, Python 3.6.8, PyTorch 1.0.0, and CUDA 9.1. Other versions might work but are not guaranteed.
-
-### Install PyFleX
-
-Add and compile PyFleX submodule
-
-    git submodule update --init --recursive
-    export PYFLEXROOT=${PWD}/PyFleX
-    export PYTHONPATH=${PYFLEXROOT}/bindings/build:$PYTHONPATH
-    export LD_LIBRARY_PATH=${PYFLEXROOT}/external/SDL2-2.0.4/lib/x64:$LD_LIBRARY_PATH
-    cd PyFleX/bindings; mkdir build; cd build; cmake ..; make -j
-
-Test PyFleX examples
-
-    cd ${PYFLEXROOT}/bindings/examples
-    python test_FluidFall.py
-
+---
 
 ## Evaluation
 
