@@ -1,3 +1,5 @@
+# Accelerating DPI-Net
+
 ## Training
 ```
 python train.py --env FluidShake --dataf /data/vision/torralba/tactile/physics_flex/data_FluidShake
@@ -9,6 +11,8 @@ python eval.py --env FluidShake --epoch 4 --iter 500000 --dataf /data/vision/tor
 ```
 
 ---
+
+# Archive
 
 ## Evaluation
 
