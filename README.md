@@ -7,8 +7,9 @@ python train.py --env FluidShake --dataf /data/vision/torralba/tactile/physics_f
 
 ## Evaluation
 ```
-CUDA_VISIBLE_DEVICES=3 python eval.py --env FluidShake --epoch 4 --iter 500000 --dataf data/small/fluid_shake/
+CUDA_VISIBLE_DEVICES=3 python eval.py --env FluidShake --epoch 4 --iter 500000 --dataf data/small/fluid_shake/ --pruning_perc 95
 ```
+- `pruning_perc`: `20` | `50` | `95` | `99`
 
 ## Misc 
 Full data path:
