@@ -10,7 +10,8 @@ python train.py --env FluidShake --dataf /data/vision/torralba/tactile/physics_f
 CUDA_VISIBLE_DEVICES=3 python eval.py --env FluidShake --epoch 4 --iter 500000 --dataf data/small/fluid_shake/
 ```
 
-Full data:
+## Misc 
+Full data path:
 `/data/vision/torralba/tactile/physics_flex/data_FluidShake`
 
 ---
