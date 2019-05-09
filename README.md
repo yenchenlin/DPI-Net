@@ -12,7 +12,9 @@ CUDA_VISIBLE_DEVICES=3 python eval.py --env FluidShake --epoch 4 --iter 500000 -
 
 ## Misc 
 Full data path:
-`/data/vision/torralba/tactile/physics_flex/data_FluidShake`
+```
+/data/vision/torralba/tactile/physics_flex/data_FluidShake
+```
 
 ---
 
