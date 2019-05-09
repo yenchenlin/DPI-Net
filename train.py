@@ -215,7 +215,7 @@ else:
 
 
 args.outf = args.outf + '_' + args.env
-args.dataf = 'data/' + args.dataf + '_' + args.env
+# args.dataf = 'data/' + args.dataf + '_' + args.env
 
 os.system('mkdir -p ' + args.outf)
 os.system('mkdir -p ' + args.dataf)

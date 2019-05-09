@@ -62,6 +62,9 @@ parser.add_argument('--position_dim', type=int, default=0)
 # relation attr:
 parser.add_argument('--relation_dim', type=int, default=0)
 
+# load prunned model
+parser.add_argument('--pruning_perc', type=int, default=0)
+
 args = parser.parse_args()
 
 
@@ -219,7 +222,7 @@ else:
 
 args.outf = args.outf + '_' + args.env
 args.evalf = args.evalf + '_' + args.env
-args.dataf = 'data/' + args.dataf + '_' + args.env
+# args.dataf = 'data/' + args.dataf + '_' + args.env
 
 print(args)
 
@@ -239,7 +242,10 @@ model = DPINet(args, stat, phases_dict, residual=True, use_gpu=use_gpu)
 if args.epoch == 0 and args.iter == 0:
     model_file = os.path.join(args.outf, 'net_best.pth')
 else:
-    model_file = os.path.join(args.outf, 'net_epoch_%d_iter_%d.pth' % (args.epoch, args.iter))
+    if args.pruning_perc == 0:  # no pruning
+        model_file = os.path.join(args.outf, 'net_epoch_%d_iter_%d.pth' % (args.epoch, args.iter))
+    else:
+        model_file = os.path.join(args.outf, 'net_epoch_%d_iter_%d_pruning_%d.pth' % (args.epoch, args.iter, args.pruning_perc))
 
 print("Loading network from %s" % model_file)
 model.load_state_dict(torch.load(model_file))
@@ -251,12 +257,14 @@ if use_gpu:
     model.cuda()
 
 
-infos = np.arange(5)
+#infos = np.arange(5)
+infos = np.arange(1)
 
-import pyflex
-pyflex.init()
+# import pyflex
+# pyflex.init()
 
 recs = []
+running_loss = 0.0
 
 for idx in range(len(infos)):
 
@@ -374,13 +382,16 @@ for idx in range(len(infos)):
 
             # print(vels)
 
-            if args.debug:
-                data_nxt_path = os.path.join(args.dataf, 'valid', str(infos[idx]), str(step + 1) + '.h5')
-                data_nxt = normalize(load_data(data_names, data_nxt_path), stat)
-                label = Variable(torch.FloatTensor(data_nxt[1][:n_particles]).cuda())
-                # print(label)
-                loss = np.sqrt(criterionMSE(vels, label).item())
-                print(loss)
+            # if args.debug:
+
+            # Print loss here
+            data_nxt_path = os.path.join(args.dataf, 'valid', str(infos[idx]), str(step + 1) + '.h5')
+            data_nxt = normalize(load_data(data_names, data_nxt_path), stat)
+            label = Variable(torch.FloatTensor(data_nxt[1][:n_particles]).cuda())
+            # print(label)
+            loss = np.sqrt(criterionMSE(vels, label).item())
+            running_loss += loss.item()
+            # print(loss)
 
         vels = denormalize([vels.data.cpu().numpy()], [stat[1]])[0]
 
@@ -399,14 +410,14 @@ for idx in range(len(infos)):
             data[1][:, :args.position_dim] = v_nxt_gt[step]
 
     ##### render for the ground truth
-    pyflex.set_scene(env_idx, scene_params, 0)
+    # pyflex.set_scene(env_idx, scene_params, 0)
 
     if args.env == 'RiceGrip':
         halfEdge = np.array([0.15, 0.8, 0.15])
         center = np.array([0., 0., 0.])
         quat = np.array([1., 0., 0., 0.])
-        pyflex.add_box(halfEdge, center, quat)
-        pyflex.add_box(halfEdge, center, quat)
+        # pyflex.add_box(halfEdge, center, quat)
+        # pyflex.add_box(halfEdge, center, quat)
     elif args.env == 'FluidShake':
         x, y, z, dim_x, dim_y, dim_z, box_dis_x, box_dis_z = scene_params
         boxes = calc_box_init_FluidShake(box_dis_x, box_dis_z, height, border)
@@ -417,14 +428,14 @@ for idx in range(len(infos)):
             halfEdge = boxes[box_idx][0]
             center = boxes[box_idx][1]
             quat = boxes[box_idx][2]
-            pyflex.add_box(halfEdge, center, quat)
+            # pyflex.add_box(halfEdge, center, quat)
 
 
     for step in range(args.time_step - 1):
-        if args.env == 'RiceGrip':
-            pyflex.set_shape_states(s_gt[step])
-        elif args.env == 'FluidShake':
-            pyflex.set_shape_states(s_gt[step, :-1])
+        # if args.env == 'RiceGrip':
+            # pyflex.set_shape_states(s_gt[step])
+        # elif args.env == 'FluidShake':
+            # pyflex.set_shape_states(s_gt[step, :-1])
 
         mass = np.zeros((n_particles, 1))
         if args.env == 'RiceGrip':
@@ -432,27 +443,28 @@ for idx in range(len(infos)):
         else:
             p = np.concatenate([p_gt[step, :n_particles], mass], 1)
 
-        pyflex.set_positions(p)
-        pyflex.render(capture=1, path=os.path.join(des_dir, 'gt_%d.tga' % step))
+        # pyflex.set_positions(p)
+        # pyflex.render(capture=1, path=os.path.join(des_dir, 'gt_%d.tga' % step))
 
     ##### render for the predictions
-    pyflex.set_scene(env_idx, scene_params, 0)
+    # pyflex.set_scene(env_idx, scene_params, 0)
 
-    if args.env == 'RiceGrip':
-        pyflex.add_box(halfEdge, center, quat)
-        pyflex.add_box(halfEdge, center, quat)
-    elif args.env == 'FluidShake':
+    # if args.env == 'RiceGrip':
+        # pyflex.add_box(halfEdge, center, quat)
+        # pyflex.add_box(halfEdge, center, quat)
+    # elif args.env == 'FluidShake':
+    if args.env == 'FluidShake':
         for box_idx in range(len(boxes) - 1):
             halfEdge = boxes[box_idx][0]
             center = boxes[box_idx][1]
             quat = boxes[box_idx][2]
-            pyflex.add_box(halfEdge, center, quat)
+            # pyflex.add_box(halfEdge, center, quat)
 
     for step in range(args.time_step - 1):
-        if args.env == 'RiceGrip':
-            pyflex.set_shape_states(s_gt[step])
-        elif args.env == 'FluidShake':
-            pyflex.set_shape_states(s_gt[step, :-1])
+        # if args.env == 'RiceGrip':
+            # pyflex.set_shape_states(s_gt[step])
+        # elif args.env == 'FluidShake':
+            # pyflex.set_shape_states(s_gt[step, :-1])
 
         mass = np.zeros((n_particles, 1))
         if args.env == 'RiceGrip':
@@ -460,8 +472,9 @@ for idx in range(len(infos)):
         else:
             p = np.concatenate([p_pred[step, :n_particles], mass], 1)
 
-        pyflex.set_positions(p)
-        pyflex.render(capture=1, path=os.path.join(des_dir, 'pred_%d.tga' % step))
+        # pyflex.set_positions(p)
+        # pyflex.render(capture=1, path=os.path.join(des_dir, 'pred_%d.tga' % step))
 
-pyflex.clean()
-
+# pyflex.clean()
+print("MSE: {:5f}".format(running_loss / (args.time_step - 1) * len(infos)))
+print("Finished evaluation")
