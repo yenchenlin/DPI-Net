@@ -5,6 +5,11 @@
 python train.py --env FluidShake --dataf /data/vision/torralba/tactile/physics_flex/data_FluidShake
 ```
 
+## Pruning
+```
+CUDA_VISIBLE_DEVICES=3 python pruning.py --env RiceGrip --pruning_perc 99
+```
+
 ## Evaluation
 ```
 CUDA_VISIBLE_DEVICES=3 python eval.py --env FluidShake --epoch 4 --iter 500000 --dataf data/small/fluid_shake/ --pruning_perc 95
