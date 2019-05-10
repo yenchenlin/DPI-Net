@@ -11,9 +11,21 @@ CUDA_VISIBLE_DEVICES=3 python pruning.py --env RiceGrip --pruning_perc 99
 ```
 
 ## Evaluation
+- FluidShake:
 ```
-CUDA_VISIBLE_DEVICES=3 python eval.py --env FluidShake --epoch 4 --iter 500000 --dataf data/small/fluid_shake/ --pruning_perc 95
+CUDA_VISIBLE_DEVICES=3 python eval.py --env FluidShake --epoch 4 --iter 500000 --dataf data/small/fluid_shake/ --model_file ./dump_FluidShake/files_FluidShake/net_epoch_4_iter_500000_pruning_95.pth
 ```
+
+- BoxBath:
+```
+CUDA_VISIBLE_DEVICES=3 python eval.py --env BoxBath --epoch 4 --iter 370000 --dataf data/small/box_bath/ --model_file ./dump_BoxBath/files_BoxBath/net_epoch_4_iter_370000_pruning_95.pth
+```
+
+- RiceGrip:
+```
+CUDA_VISIBLE_DEVICES=3 python eval.py --env RiceGrip --epoch 18 --iter 130000 --dataf data/small/rice_grip/ --model_file ./dump_RiceGrip/files_RiceGrip/net_epoch_18_iter_130000_pruning_95.pth
+```
+
 - `pruning_perc`: `20` | `50` | `95` | `99`
 
 ## Misc 
